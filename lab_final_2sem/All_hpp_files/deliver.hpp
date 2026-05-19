@@ -21,14 +21,21 @@ public:
         is_linked_with_storage = false;
     }
 
+    //getters
     unsigned int getId();
-
     unsigned int getIdLinkedStorage();
-
     string getName();
-
     bool getIsHaveOrder();
-    
     bool getIsLinkedWithStorage();
+
+    //setters
+    void setId(unsigned int id);
+    void setIdLinkedStorage(unsigned int id_linked_storage);
+    void setName(string &name);
+    void setIsHaveOrder(bool is_have_order);
+    void setIsLinkedWithStorage(bool is_linked_with_storage);
+
+    //methods
+    
 
 };
