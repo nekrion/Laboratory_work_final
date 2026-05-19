@@ -24,18 +24,18 @@ public:
     }
 
     //getters
-    unsigned int getId();
-    string getName();
-    pair<int, int> getCoordinates();
-    vector<unsigned int> getIdDelivers();
-    bool getIsActive();
+    unsigned int getId() const;
+    const string& getName() const;
+    const pair<int, int>& getCoordinates() const;
+    const vector<unsigned int>& getIdDelivers() const;
+    bool getIsActive() const;
 
     //setters
-    void setId(unsigned int id);
-    void setName(string &name);
-    void setCoordinates(const pair<int, int> &coordinates);
-    void setIdDelivers(vector<unsigned int> &id_linked_delivers);
-    void setIsActive(bool is_active);
+    void setId(unsigned int n_id);
+    void setName(const string &n_name);
+    void setCoordinates(const pair<int, int> &n_coordinates);
+    void setIdDelivers(const vector<unsigned int> &n_id_linked_delivers);
+    void setIsActive(bool n_is_active);
 
     //methods
     void link_deliver(unsigned int id_deliver); // для того чтобы свзяать доставшика со складом
