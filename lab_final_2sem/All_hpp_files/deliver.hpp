@@ -22,18 +22,18 @@ public:
     }
 
     //getters
-    unsigned int getId();
-    unsigned int getIdLinkedStorage();
-    string getName();
-    bool getIsHaveOrder();
-    bool getIsLinkedWithStorage();
+    unsigned int getId() const;
+    unsigned int getIdLinkedStorage() const;
+    const string& getName() const;
+    bool getIsHaveOrder() const;
+    bool getIsLinkedWithStorage() const;
 
     //setters
-    void setId(unsigned int id);
-    void setIdLinkedStorage(unsigned int id_linked_storage);
-    void setName(string &name);
-    void setIsHaveOrder(bool is_have_order);
-    void setIsLinkedWithStorage(bool is_linked_with_storage);
+    void setId(unsigned int n_id);
+    void setIdLinkedStorage(unsigned int n_id_linked_storage);
+    void setName(const string &name);
+    void setIsHaveOrder(bool n_is_have_order);
+    void setIsLinkedWithStorage(bool n_is_linked_with_storage);
 
     //methods
     
