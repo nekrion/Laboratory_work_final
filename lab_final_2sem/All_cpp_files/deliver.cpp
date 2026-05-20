@@ -2,6 +2,18 @@
 // здесь реализация классов/класса
 
 
+//constructors
+Deliver::Deliver(unsigned int id, unsigned int id_linked_storage, unsigned int speed, 
+                 const string &name, bool is_have_order, bool is_linked_with_storage) 
+{
+    this->id = id;
+    this->id_linked_storage = id_linked_storage;
+    this->speed = speed;
+    this->name = name;
+    this->is_have_order = is_have_order;
+    this->is_linked_with_storage = is_linked_with_storage;
+}
+
 //реализация getters
 unsigned int Deliver::getId() const {
     return id;
@@ -9,6 +21,10 @@ unsigned int Deliver::getId() const {
 
 unsigned int Deliver::getIdLinkedStorage() const {
     return id_linked_storage;
+}
+
+unsigned int Deliver::getSpeed() const {
+    return speed;
 }
 
 const string& Deliver::getName() const {
@@ -31,6 +47,10 @@ void Deliver::setId(unsigned int n_id) {
 
 void Deliver::setIdLinkedStorage(unsigned int n_id_linked_storage) {
     id_linked_storage = n_id_linked_storage;
+}
+
+void Deliver::setSpeed(unsigned int n_speed) {
+    speed = n_speed;
 }
 
 void Deliver::setName(const string &n_name) {

@@ -1,6 +1,24 @@
 #include "../All_hpp_files/order.hpp"
 // здесь реализация классов/класса
 
+
+//constructors
+Order::Order(unsigned int id, unsigned int summary, int date_accepted, int date_delivered, 
+          const string &place, const string &storage, bool is_accepted, bool is_delivered) {
+    
+    this->id = id;
+    this->id_deliver = 0;
+    this->summary = summary;
+    this->date_accepted = date_accepted;
+    this->date_delivered = date_delivered;
+    this->place = place;
+    this->storage = storage;
+    this->is_accepted = is_accepted;
+    this->is_delivered = is_delivered;
+}
+
+
+
 //getters
 unsigned int Order::getId() const {
     return id;
