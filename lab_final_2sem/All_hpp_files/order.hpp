@@ -1,3 +1,4 @@
+#pragma once
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -20,6 +21,7 @@ private:
 
 public:
 
+    //constructors
     Order() {
         id = 0;
         id_deliver = 0;
@@ -31,6 +33,9 @@ public:
         is_accepted = false;
         is_delivered = false;
     }
+
+    Order(unsigned int id, unsigned int summary, int date_accepted, int date_delivered, 
+          const string &place, const string &storage, bool is_accepted, bool is_delivered);
     
     //getters
     unsigned int getId() const;

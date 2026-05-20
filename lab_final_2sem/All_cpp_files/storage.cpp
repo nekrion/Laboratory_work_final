@@ -1,6 +1,18 @@
 #include "../All_hpp_files/storage.hpp"
 // здесь реализация классов/класса
 
+//constructors
+
+Storage::Storage(unsigned int id, const string &name, const pair<int, int> &coordinates, 
+                 const vector<unsigned int> &id_linked_delivers, bool is_active) {
+                    
+    this->id = id;
+    this->name = name;
+    this->coordinates = coordinates;
+    this->id_linked_delivers = id_linked_delivers;
+    this->is_active = is_active;
+}
+
 
 // реализация getters
 unsigned int Storage::getId() const {

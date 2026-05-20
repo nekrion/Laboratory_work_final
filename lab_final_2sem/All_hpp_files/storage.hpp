@@ -1,3 +1,4 @@
+#pragma once
 #include <bits/stdc++.h>
 #include "../All_hpp_files/deliver.hpp"
 
@@ -22,6 +23,9 @@ public:
         coordinates = {0, 0};
         is_active = false;
     }
+
+    Storage(unsigned int id, const string &name, const pair<int, int> &coordinates, 
+                 const vector<unsigned int> &id_linked_delivers, bool is_active);
 
     //getters
     unsigned int getId() const;
