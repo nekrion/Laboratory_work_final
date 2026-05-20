@@ -33,30 +33,30 @@ public:
     }
     
     //getters
-    unsigned int getId();
-    unsigned int getIdDeliver();
-    unsigned int getSummary();
-    int getDateAccepted();
-    int getDateDelivered();
-    string getPlace();
-    string getStorage();
-    bool getIsAccepted();
-    bool getIsDelivered();
+    unsigned int getId() const;
+    unsigned int getIdDeliver() const;
+    unsigned int getSummary() const;
+    int getDateAccepted() const;
+    int getDateDelivered() const;
+    const string& getPlace() const;
+    const string& getStorage() const;
+    bool getIsAccepted() const;
+    bool getIsDelivered() const;
 
 
     //setters
-    void setId(unsigned int id);
-    void setIdDeliver();
-    void setSummary(unsigned int summary);
-    void setDateAccepted(int date_accepted);
-    void setDateDelivered(int date_delivered);
-    void setPlace(string &place);
-    void setStorage(string &storage);
-    void setIsAccepted(bool is_accepted);
-    void setIsDelivered(bool is_delivered);
+    void setId(unsigned int n_id);
+    void setIdDeliver(unsigned int n_id_deliver);
+    void setSummary(unsigned int n_summary);
+    void setDateAccepted(int n_date_accepted);
+    void setDateDelivered(int n_date_delivered);
+    void setPlace(string &n_place);
+    void setStorage(string &n_storage);
+    void setIsAccepted(bool n_is_accepted);
+    void setIsDelivered(bool n_is_delivered);
 
     //methods
-    void link_deliver(unsigned int id_deliver); // метод для связывания заказа с курьером
+    void link_deliver(unsigned int n_id_deliver); // метод для связывания заказа с курьером
     
 
     // плюс нужно добавить перегрузку оператора вывода для удобного вывода информации
