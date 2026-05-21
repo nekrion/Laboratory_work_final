@@ -45,6 +45,7 @@ public:
     void setIsLinkedWithStorage(bool n_is_linked_with_storage);
 
     //methods
-    
+    void print() const; // удобный вывод информации о Deliver
+
 
 };

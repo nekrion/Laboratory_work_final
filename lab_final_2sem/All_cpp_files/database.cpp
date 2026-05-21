@@ -2,9 +2,9 @@
 // здесь реализация класса
 
 void DataBase::addOrder(unsigned int id, unsigned int summary, int date_accepted, int date_delivered, 
-                        const string &place, const string &storage, bool is_accepted, bool is_delivered) {
+                        const string &place, const string &storage, bool is_accepted, bool is_delivered, const pair<int, int> &place_coordinates) {
     
-    Order new_order(id, summary, date_accepted, date_delivered, place, storage, is_accepted, is_delivered);
+    Order new_order(id, summary, date_accepted, date_delivered, place, storage, is_accepted, is_delivered, place_coordinates);
     orders.push_back(new_order);
     
     cout << "Заказ ID:" << id << " добавлен в базу данных\n";
@@ -62,7 +62,7 @@ void DataBase::save_to_file(string &str) {
     for (const auto &o : orders) {
         out << o.getId() << " " << o.getIdDeliver() << " " << o.getSummary() << " " << o.getDateAccepted() << " " 
         << o.getDateDelivered() << " " << o.getPlace() << " " << o.getStorage() << " " << o.getIsAccepted() << " " 
-        << o.getIsDelivered() << "\n";
+        << o.getIsDelivered() << " " << o.getPlaceCoordinates().first << " " << o.getPlaceCoordinates().second << "\n";
     }
 
     out.close();
@@ -117,10 +117,11 @@ void DataBase::load_from_file(string &str) {
                 int date_accepted, date_delivered; 
                 string place, storage_name; 
                 bool is_accepted, is_delivered;
+                pair<int, int> place_coordinates;
                 in >> id >> id_deliver >> summary >> date_accepted >> date_delivered 
-                >> place >> storage_name >> is_accepted >> is_delivered;
+                >> place >> storage_name >> is_accepted >> is_delivered >> place_coordinates.first >> place_coordinates.second;
                 
-                Order loaded_order(id, summary, date_accepted, date_delivered, place, storage_name, is_accepted, is_delivered);
+                Order loaded_order(id, summary, date_accepted, date_delivered, place, storage_name, is_accepted, is_delivered, place_coordinates);
                 loaded_order.setIdDeliver(id_deliver);
                 orders.push_back(loaded_order);
             }

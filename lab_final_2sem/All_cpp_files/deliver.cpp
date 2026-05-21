@@ -66,3 +66,22 @@ void Deliver::setIsLinkedWithStorage(bool n_is_linked_with_storage) {
 }
 
 
+//methods
+void Deliver::print() const {
+    cout << "--------------------------\n";
+    cout << "Тип: Курьер\n";
+    cout << "ID: " << id << "\n";
+    cout << "Имя: " << name << "\n";
+    cout << "Скорость: " << speed << "\n";
+    if (id_linked_storage == 0) {
+        cout << "Не привязан к складу\n";
+    } else {
+        cout << "Привязан к складу ID: " << id_linked_storage << "\n";
+    }
+    if (is_have_order) {
+        cout << "Есть заказ\n";
+    } else {
+        cout << "Не назначен на заказ\n";
+    }
+    cout << "--------------------------\n";
+}

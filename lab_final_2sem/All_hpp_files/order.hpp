@@ -15,6 +15,7 @@ private:
     string storage;  // с какого склада
     bool is_accepted;  // состояние что заказ принят
     bool is_delivered; // состояние что заказ доставлен
+    pair<int, int> place_coordinates; // координаты доставки
 
     // также можно в будущем добавить тип заказа, например, продукты это или техника или ещё что-то
 
@@ -32,10 +33,11 @@ public:
         storage = "-";
         is_accepted = false;
         is_delivered = false;
+        place_coordinates = {0, 0};
     }
 
     Order(unsigned int id, unsigned int summary, int date_accepted, int date_delivered, 
-          const string &place, const string &storage, bool is_accepted, bool is_delivered);
+          const string &place, const string &storage, bool is_accepted, bool is_delivered, const pair<int, int> &place_coordinates);
     
     //getters
     unsigned int getId() const;
@@ -47,6 +49,7 @@ public:
     const string& getStorage() const;
     bool getIsAccepted() const;
     bool getIsDelivered() const;
+    const pair<int, int>& getPlaceCoordinates() const;
 
 
     //setters
@@ -59,13 +62,11 @@ public:
     void setStorage(string &n_storage);
     void setIsAccepted(bool n_is_accepted);
     void setIsDelivered(bool n_is_delivered);
+    void setPlaceCoordinates(pair<int, int> &n_place_coordinates);
 
     //methods
     void link_deliver(unsigned int n_id_deliver); // метод для связывания заказа с курьером
-    
-
-    // плюс нужно добавить перегрузку оператора вывода для удобного вывода информации
-    // можно и перегрузить оператор ввода (по желанию)
+    void print() const; // удобный вывод информации о Order
 
 
 };
