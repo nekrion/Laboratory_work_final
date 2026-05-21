@@ -3,43 +3,46 @@
 #include "deliver.hpp"
 #include "order.hpp"
 #include "storage.hpp"
-
+#include <fstream>
+#include <algorithm>
 using namespace std;
 
 
-class DataBase {
+class Database {
 private:
-
-    vector<Order> orders; // массив объектов класса Order
-    vector<Deliver> delivers; // массив объектов класса Deliver
-    vector<Storage> storages; // массив объектов класса Storage
-
+    vector<Storage> storages;
+    vector<Deliver> delivers;
+    vector<Order> orders;
+    int next_order_id;
 
 public:
+    Database();
 
-    DataBase() {}; //просто пустой конструктор
+    // Добавление
+    void addStorage(const Storage& s);
+    void addDeliver(const Deliver& d);
+    void addOrder(const Order& o);
 
-    //adders
-    void addOrder(unsigned int id, unsigned int summary, int date_accepted, int date_delivered, 
-        const string &place, const string &storage, bool is_accepted, bool is_delivered, const pair<int,int> &place_coordinates); // добавление объетка класса Order
-    
-    void addDeliver(unsigned int id, unsigned int id_linked_storage, unsigned int speed, const string &name,
-        bool is_have_order, bool is_linked_with_storage); // добавление объетка класса Deliver
-    
-    void addStorage(unsigned int id, const string &name, const pair<int, int> &coordinates, 
-        const vector<unsigned int> &id_linked_delivers, bool is_active); // добавление объетка класса Storage
+    // Удаление
+    bool removeStorage(unsigned int id);
+    bool removeDeliver(unsigned int id);
+    bool removeOrder(unsigned int id);
 
-    // (Примечание) Можно сделать необяхательным заоленение в функции cector<Deliver> &linked_delivers
+    // Поиск
+    Storage* findStorage(unsigned int id);
+    Deliver* findDeliver(unsigned int id);
+    Order* findOrder(unsigned int id);
+    vector<Deliver*> findFreeDeliversByStorage(unsigned int storage_id);
 
+    // Получение
+    vector<Storage>& getStorages();
+    vector<Deliver>& getDelivers();
+    vector<Order>& getOrders();
 
-    //work with files
-    void save_to_file(string &str); // сохранение базы в файл
-    void load_from_file(string &str); // загрузка базы из файла
+    // Загрузка/сохранение
+    void saveToFile(const string& filename);
+    void loadFromFile(const string& filename);
 
-
-    //methods
-    void remove(string &str, unsigned int id); // удаление из базы данных одного элемента конкретного класса
-    void print(); // пока что без перегузки оператора <<, поэтому метод вывода всей базы данных
-
+    void printAll() const;
+    int getNextOrderId();
 };
-
