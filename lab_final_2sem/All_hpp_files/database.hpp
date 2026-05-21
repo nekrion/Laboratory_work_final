@@ -21,7 +21,7 @@ public:
 
     //adders
     void addOrder(unsigned int id, unsigned int summary, int date_accepted, int date_delivered, 
-        const string &place, const string &storage, bool is_accepted, bool is_delivered); // добавление объетка класса Order
+        const string &place, const string &storage, bool is_accepted, bool is_delivered, const pair<int,int> &place_coordinates); // добавление объетка класса Order
     
     void addDeliver(unsigned int id, unsigned int id_linked_storage, unsigned int speed, const string &name,
         bool is_have_order, bool is_linked_with_storage); // добавление объетка класса Deliver

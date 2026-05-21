@@ -43,5 +43,6 @@ public:
 
     //methods
     void link_deliver(unsigned int id_deliver); // для того чтобы свзяать доставшика со складом
+    void print() const; // удобный вывод информации о Storage
 
 };

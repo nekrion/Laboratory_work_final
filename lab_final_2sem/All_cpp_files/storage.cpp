@@ -58,3 +58,28 @@ void Storage::setIsActive(bool n_is_active) {
     is_active = n_is_active;
 }
 
+
+//methods
+void Storage::print() const {
+    cout << "--------------------------\n";
+    cout << "Тип: Склад\n";
+    cout << "ID: " << id << "\n";
+    cout << "Название склада: " << name << "\n";
+    cout << "Координаты x: " << coordinates.first << " y: " << coordinates.second << "\n";
+    cout << "ID курьеров, закрепленных за данным складом: ";
+    if (id_linked_delivers.empty()) {
+        cout << "Нет курьеров\n";
+    } else {
+        for (auto i : id_linked_delivers) {
+            cout << i << " ";
+        }
+        cout << "\n";
+    }
+    if (is_active) {
+        cout << "Склад работает\n";
+    } else {
+        cout << "Склад не работает\n";
+    }
+    cout << "--------------------------\n";
+}
+
