@@ -1,133 +1,307 @@
 #include "../All_hpp_files/database.hpp"
 // здесь реализация класса
 
-void DataBase::addOrder(unsigned int id, unsigned int summary, int date_accepted, int date_delivered, 
-                        const string &place, const string &storage, bool is_accepted, bool is_delivered, const pair<int, int> &place_coordinates) {
-    
-    Order new_order(id, summary, date_accepted, date_delivered, place, storage, is_accepted, is_delivered, place_coordinates);
-    orders.push_back(new_order);
-    
-    cout << "Заказ ID:" << id << " добавлен в базу данных\n";
+// Конструктор
+Database::Database() : next_order_id(1) {}
+
+// Добавление склада
+void Database::addStorage(const Storage& s) {
+    storages.push_back(s);
 }
 
-void DataBase::addDeliver(unsigned int id, unsigned int id_linked_storage, unsigned int speed, const string &name,
-        bool is_have_order, bool is_linked_with_storage) {
-
-    Deliver new_deliver(id, id_linked_storage, speed, name, is_have_order, is_linked_with_storage);
-    delivers.push_back(new_deliver);
-
-    cout << "Курьер ID: " << id << " был создан\n";
+// Добавление курьера
+void Database::addDeliver(const Deliver& d) {
+    delivers.push_back(d);
 }
 
-void DataBase::addStorage(unsigned int id, const string &name, const pair<int, int> &coordinates, 
-        const vector<unsigned int> &id_linked_delivers, bool is_active) {
-
-    Storage new_storage(id, name, coordinates, id_linked_delivers, is_active);
-    storages.push_back(new_storage);
-
-    cout << "Склад ID: " << id << " был создан\n";
-}
-
-//work with files
-
-void DataBase::save_to_file(string &str) {
-    ofstream out(str);
-    if (!out.is_open()) {
-        cout << "!    ERROR      !\n";
-        return;
+// Добавление заказа
+void Database::addOrder(const Order& o) {
+    orders.push_back(o);
+    if (o.getId() >= static_cast<unsigned int>(next_order_id)) {
+        next_order_id = o.getId() + 1;
     }
+}
 
+// Удаление склада по ID
+bool Database::removeStorage(unsigned int id) {
+    auto it = remove_if(storages.begin(), storages.end(),
+        [id](const Storage& s) { return s.getId() == id; });
+    if (it != storages.end()) {
+        storages.erase(it, storages.end());
+        return true;
+    }
+    return false;
+}
 
-    out << "[STORAGES]\n" << storages.size() << "\n";
-    for (const auto &s : storages) {
-        out << s.getId() << " " << s.getName() << " " 
-            << s.getCoordinates().first << " " << s.getCoordinates().second << " " << s.getIsActive() << "\n";
+// Удаление курьера по ID
+bool Database::removeDeliver(unsigned int id) {
+    auto it = remove_if(delivers.begin(), delivers.end(),
+        [id](const Deliver& d) { return d.getId() == id; });
+    if (it != delivers.end()) {
+        delivers.erase(it, delivers.end());
+        return true;
+    }
+    return false;
+}
 
-        out << s.getIdDelivers().size() << " ";
+// Удаление заказа по ID
+bool Database::removeOrder(unsigned int id) {
+    auto it = remove_if(orders.begin(), orders.end(),
+        [id](const Order& o) { return o.getId() == id; });
+    if (it != orders.end()) {
+        orders.erase(it, orders.end());
+        return true;
+    }
+    return false;
+}
 
-        for (auto d_id : s.getIdDelivers()) {
-            out << d_id << " ";
+// Поиск склада по ID
+Storage* Database::findStorage(unsigned int id) {
+    for (auto& storage : storages) {
+        if (storage.getId() == id) {
+            return &storage;
         }
-        out << "\n";
-
     }
-
-    out << "[DELIVERS]\n" << delivers.size() << "\n";
-    for (const auto &d : delivers) {
-        out << d.getId() << " " << d.getIdLinkedStorage() << " " << d.getSpeed() << " " << d.getName() << " " 
-            << d.getIsHaveOrder() << " " << d.getIsLinkedWithStorage() << "\n";
-    }
-
-    out << "[ORDERS]\n" << orders.size() << "\n";
-    for (const auto &o : orders) {
-        out << o.getId() << " " << o.getIdDeliver() << " " << o.getSummary() << " " << o.getDateAccepted() << " " 
-        << o.getDateDelivered() << " " << o.getPlace() << " " << o.getStorage() << " " << o.getIsAccepted() << " " 
-        << o.getIsDelivered() << " " << o.getPlaceCoordinates().first << " " << o.getPlaceCoordinates().second << "\n";
-    }
-
-    out.close();
-    cout << "БД сохранена\n";
+    return nullptr;
 }
 
+// Поиск курьера по ID
+Deliver* Database::findDeliver(unsigned int id) {
+    for (auto& deliver : delivers) {
+        if (deliver.getId() == id) {
+            return &deliver;
+        }
+    }
+    return nullptr;
+}
 
-void DataBase::load_from_file(string &str) {
-    ifstream in(str);
-    if (!in.is_open()) {
-        cout << "!    ERROR      !\n";
+// Поиск заказа по ID
+Order* Database::findOrder(unsigned int id) {
+    for (auto& order : orders) {
+        if (order.getId() == id) {
+            return &order;
+        }
+    }
+    return nullptr;
+}
+
+// Поиск свободных курьеров по ID склада
+vector<Deliver*> Database::findFreeDeliversByStorage(unsigned int storage_id) {
+    vector<Deliver*> free_delivers;
+    for (auto& deliver : delivers) {
+        if (deliver.getStorageId() == storage_id &&
+            deliver.getIsFree() &&
+            !deliver.getIsOnDelivery()) {
+            free_delivers.push_back(&deliver);
+        }
+    }
+    return free_delivers;
+}
+
+// Получение всех складов
+vector<Storage>& Database::getStorages() {
+    return storages;
+}
+
+// Получение всех курьеров
+vector<Deliver>& Database::getDelivers() {
+    return delivers;
+}
+
+// Получение всех заказов
+vector<Order>& Database::getOrders() {
+    return orders;
+}
+
+// Сохранение в файл
+void Database::saveToFile(const string& filename) {
+    ofstream file(filename);
+    if (!file) {
+        cout << "Ошибка открытия файла для сохранения!\n";
         return;
     }
 
+    // Сохраняем склады
+    file << "STORAGES\n";
+    for (const auto& s : storages) {
+        file << s.getId() << "|" << s.getName() << "|"
+            << s.getCoordinates().first << "," << s.getCoordinates().second << "|";
+        for (auto id : s.getIdDelivers()) {
+            file << id << ",";
+        }
+        file << "|" << s.getIsActive() << "\n";
+    }
+
+    // Сохраняем курьеров
+    file << "DELIVERS\n";
+    for (const auto& d : delivers) {
+        file << d.getId() << "|" << d.getName() << "|"
+            << d.getCoordinates().first << "," << d.getCoordinates().second << "|"
+            << d.getStorageId() << "|" << d.getIsFree() << "\n";
+    }
+
+    // Сохраняем заказы
+    file << "ORDERS\n";
+    for (const auto& o : orders) {
+        file << o.getId() << "|" << o.getCustomerName() << "|"
+            << o.getDeliveryAddress().first << "," << o.getDeliveryAddress().second << "|"
+            << o.getStorageId() << "|" << o.getIsCompleted() << "\n";
+    }
+
+    file.close();
+    cout << "Данные сохранены в файл: " << filename << "\n";
+}
+
+// Загрузка из файла
+void Database::loadFromFile(const string& filename) {
+    ifstream file(filename);
+    if (!file) {
+        cout << "Файл не найден: " << filename << "\n";
+        return;
+    }
+
+    // Очищаем текущие данные
     storages.clear();
     delivers.clear();
     orders.clear();
 
+    string line;
     string section;
-    while (in >> section) {
-        if (section == "[STORAGES]") {
-            size_t count;
-            in >> count;
-            for (size_t i = 0; i < count; ++i) {
-                unsigned int id; string name; int x, y; bool is_active;
-                in >> id >> name >> x >> y >> is_active;
-                
-                size_t del_count;
-                in >> del_count;
-                vector<unsigned int> linked_delivers(del_count);
-                for (size_t j = 0; j < del_count; ++j) {
-                    in >> linked_delivers[j];
-                }
-                storages.push_back(Storage(id, name, {x, y}, linked_delivers, is_active));
-            }
-        } 
-        else if (section == "[DELIVERS]") {
-            size_t count;
-            in >> count;
-            for (size_t i = 0; i < count; ++i) {
-                unsigned int id, id_linked_storage, speed; string name; bool is_have_order, is_linked_with_storage;
-                in >> id >> id_linked_storage >> speed >> name >> is_have_order >> is_linked_with_storage;
-                delivers.push_back(Deliver(id, id_linked_storage, speed, name, is_have_order, is_linked_with_storage));
-            }
-        } 
-        else if (section == "[ORDERS]") {
-            size_t count;
-            in >> count;
-            for (size_t i = 0; i < count; ++i) {
+    unsigned int max_id = 0;
 
-                unsigned int id, id_deliver, summary;
-                int date_accepted, date_delivered; 
-                string place, storage_name; 
-                bool is_accepted, is_delivered;
-                pair<int, int> place_coordinates;
-                in >> id >> id_deliver >> summary >> date_accepted >> date_delivered 
-                >> place >> storage_name >> is_accepted >> is_delivered >> place_coordinates.first >> place_coordinates.second;
-                
-                Order loaded_order(id, summary, date_accepted, date_delivered, place, storage_name, is_accepted, is_delivered, place_coordinates);
-                loaded_order.setIdDeliver(id_deliver);
-                orders.push_back(loaded_order);
+    while (getline(file, line)) {
+        if (line == "STORAGES") {
+            section = "STORAGES";
+            continue;
+        }
+        else if (line == "DELIVERS") {
+            section = "DELIVERS";
+            continue;
+        }
+        else if (line == "ORDERS") {
+            section = "ORDERS";
+            continue;
+        }
+
+        if (line.empty()) continue;
+
+        stringstream ss(line);
+        string token;
+        vector<string> parts;
+
+        while (getline(ss, token, '|')) {
+            parts.push_back(token);
+        }
+
+        if (section == "STORAGES" && parts.size() >= 5) {
+            unsigned int id = stoul(parts[0]);
+            string name = parts[1];
+
+            // Парсим координаты
+            stringstream coord_ss(parts[2]);
+            string coord_x, coord_y;
+            getline(coord_ss, coord_x, ',');
+            getline(coord_ss, coord_y, ',');
+            pair<int, int> coords(stoi(coord_x), stoi(coord_y));
+
+            // Парсим ID курьеров
+            vector<unsigned int> deliver_ids;
+            stringstream deliver_ss(parts[3]);
+            string deliver_id;
+            while (getline(deliver_ss, deliver_id, ',')) {
+                if (!deliver_id.empty()) {
+                    deliver_ids.push_back(stoul(deliver_id));
+                }
             }
+
+            bool is_active = (parts[4] == "1");
+
+            storages.push_back(Storage(id, name, coords, deliver_ids, is_active));
+            if (id > max_id) max_id = id;
+
+        }
+        else if (section == "DELIVERS" && parts.size() >= 5) {
+            unsigned int id = stoul(parts[0]);
+            string name = parts[1];
+
+            stringstream coord_ss(parts[2]);
+            string coord_x, coord_y;
+            getline(coord_ss, coord_x, ',');
+            getline(coord_ss, coord_y, ',');
+            pair<int, int> coords(stoi(coord_x), stoi(coord_y));
+
+            unsigned int storage_id = stoul(parts[3]);
+            bool is_free = (parts[4] == "1");
+
+            Deliver d(id, name, coords, storage_id);
+            d.setIsFree(is_free);
+            delivers.push_back(d);
+            if (id > max_id) max_id = id;
+
+        }
+        else if (section == "ORDERS" && parts.size() >= 5) {
+            unsigned int id = stoul(parts[0]);
+            string customer_name = parts[1];
+
+            stringstream coord_ss(parts[2]);
+            string coord_x, coord_y;
+            getline(coord_ss, coord_x, ',');
+            getline(coord_ss, coord_y, ',');
+            pair<int, int> address(stoi(coord_x), stoi(coord_y));
+
+            unsigned int storage_id = stoul(parts[3]);
+            bool is_completed = (parts[4] == "1");
+
+            Order o(id, customer_name, address, storage_id);
+            o.setIsCompleted(is_completed);
+            orders.push_back(o);
+            if (id > max_id) max_id = id;
         }
     }
 
-    in.close();
-    cout << "БД загружена из файла\n";
+    next_order_id = max_id + 1;
+    file.close();
+    cout << "Данные загружены из файла: " << filename << "\n";
+}
+
+// Вывод всей БД на экран
+void Database::printAll() const {
+    cout << "\n========== БАЗА ДАННЫХ ==========\n";
+
+    cout << "\n--- Склады ---\n";
+    if (storages.empty()) {
+        cout << "Нет складов\n";
+    }
+    else {
+        for (const auto& s : storages) {
+            s.print();
+        }
+    }
+
+    cout << "\n--- Курьеры ---\n";
+    if (delivers.empty()) {
+        cout << "Нет курьеров\n";
+    }
+    else {
+        for (const auto& d : delivers) {
+            d.print();
+        }
+    }
+
+    cout << "\n--- Заказы ---\n";
+    if (orders.empty()) {
+        cout << "Нет заказов\n";
+    }
+    else {
+        for (const auto& o : orders) {
+            o.print();
+        }
+    }
+
+    cout << "================================\n";
+}
+
+// Получение следующего ID для заказа
+int Database::getNextOrderId() {
+    return next_order_id++;
 }
