@@ -1,5 +1,6 @@
 #pragma once
 #include <bits/stdc++.h>
+#include <cmath>
 
 using namespace std;
 
@@ -7,66 +8,49 @@ class Order {
 private:
 
     unsigned int id;  // id или номер заказа
-    unsigned int id_deliver; // id курьера, кто взял заказ
-    unsigned int summary; // сумма заказа
-    int date_accepted; // когда приняли
-    int date_delivered;  // когда доставили
+    string customer_name;
     string place;  // куда доставить
-    string storage;  // с какого склада
-    bool is_accepted;  // состояние что заказ принят
-    bool is_delivered; // состояние что заказ доставлен
-    pair<int, int> place_coordinates; // координаты доставки
+    unsigned int storage_id; // от какого склада
+    pair<int, int> delivery_address; // координаты доставки
+    bool is_completed; // статус выполнения заказа
+    bool is_active; // назначен ли курьеру
+    unsigned int assigned_deliver_id; // id доставки
+    double distance_from_storage; // расстояние от склада до клиента
+    double estimated_time; // оценочное время доставки
 
-    // также можно в будущем добавить тип заказа, например, продукты это или техника или ещё что-то
-
+    // также можно в будущем добавить тип заказа, например, 
+    // продукты это или техника или ещё что-то
 
 public:
 
-    //constructors
-    Order() {
-        id = 0;
-        id_deliver = 0;
-        summary = 0;
-        date_accepted = 0;
-        date_delivered = 0;
-        place = "-";
-        storage = "-";
-        is_accepted = false;
-        is_delivered = false;
-        place_coordinates = {0, 0};
-    }
+    // конструкторы
+    Order() : id(0), customer_name("-"), place(""), storage_id(0),
+        delivery_address({ 0, 0 }), is_completed(false), is_active(false),
+        assigned_deliver_id(0), distance_from_storage(0), estimated_time(0) {}
 
-    Order(unsigned int id, unsigned int summary, int date_accepted, int date_delivered, 
-          const string &place, const string &storage, bool is_accepted, bool is_delivered, const pair<int, int> &place_coordinates);
-    
-    //getters
+    Order(unsigned int id, const string& name, const pair<int, int>& addr,
+        unsigned int storage_id);
+
+    // геттеры
     unsigned int getId() const;
-    unsigned int getIdDeliver() const;
-    unsigned int getSummary() const;
-    int getDateAccepted() const;
-    int getDateDelivered() const;
-    const string& getPlace() const;
-    const string& getStorage() const;
-    bool getIsAccepted() const;
-    bool getIsDelivered() const;
-    const pair<int, int>& getPlaceCoordinates() const;
+    string getCustomerName() const;
+    pair<int, int> getDeliveryAddress() const;
+    unsigned int getStorageId() const;
+    bool getIsCompleted() const;
+    bool getIsActive() const;
+    unsigned int getAssignedDeliverId() const;
+    double getDistance() const;
+    double getEstimatedTime() const;
 
+    // сеттеры
+    void setIsCompleted(bool completed);
+    void setIsActive(bool active);
+    void setAssignedDeliverId(unsigned int deliver_id);
+    void setDistance(double dist);
+    void setEstimatedTime(double time);
 
-    //setters
-    void setId(unsigned int n_id);
-    void setIdDeliver(unsigned int n_id_deliver);
-    void setSummary(unsigned int n_summary);
-    void setDateAccepted(int n_date_accepted);
-    void setDateDelivered(int n_date_delivered);
-    void setPlace(string &n_place);
-    void setStorage(string &n_storage);
-    void setIsAccepted(bool n_is_accepted);
-    void setIsDelivered(bool n_is_delivered);
-    void setPlaceCoordinates(pair<int, int> &n_place_coordinates);
+    void print() const;
 
-    //methods
-    void link_deliver(unsigned int n_id_deliver); // метод для связывания заказа с курьером
-    void print() const; // удобный вывод информации о Order
-
-
+    // вычисление расстояния до точки
+    double calculateDistanceTo(const pair<int, int>& point) const;
 };
