@@ -1,43 +1,43 @@
 #include "../All_hpp_files/manager.hpp"
 
 
-// конструктор
+// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 DeliveryManager::DeliveryManager(Database& database)
     : db(database), current_time(0.0) {}
 
-// добавление заказа в очередь
+// РґРѕР±Р°РІР»РµРЅРёРµ Р·Р°РєР°Р·Р° РІ РѕС‡РµСЂРµРґСЊ
 void DeliveryManager::addOrderToQueue(const Order& order) {
     order_queue.push(order);
     db.addOrder(order);
-    cout << "Заказ #" << order.getId() << " добавлен в очередь!\n";
+    cout << "Р—Р°РєР°Р· #" << order.getId() << " РґРѕР±Р°РІР»РµРЅ РІ РѕС‡РµСЂРµРґСЊ!\n";
 }
 
-// назначение заказов свободным курьерам
+// РЅР°Р·РЅР°С‡РµРЅРёРµ Р·Р°РєР°Р·РѕРІ СЃРІРѕР±РѕРґРЅС‹Рј РєСѓСЂСЊРµСЂР°Рј
 void DeliveryManager::assignOrders() {
     vector<Deliver*> free_delivers;
 
-    // собираем всех свободных курьеров
+    // СЃРѕР±РёСЂР°РµРј РІСЃРµС… СЃРІРѕР±РѕРґРЅС‹С… РєСѓСЂСЊРµСЂРѕРІ
     for (auto& deliver : db.getDelivers()) {
         if (deliver.getIsFree() && !deliver.getIsOnDelivery()) {
             free_delivers.push_back(&deliver);
         }
     }
 
-    // назначаем заказы из очереди
+    // РЅР°Р·РЅР°С‡Р°РµРј Р·Р°РєР°Р·С‹ РёР· РѕС‡РµСЂРµРґРё
     while (!order_queue.empty() && !free_delivers.empty()) {
         Order order = order_queue.front();
         order_queue.pop();
 
-        // находим склад, от которого будет доставка
+        // РЅР°С…РѕРґРёРј СЃРєР»Р°Рґ, РѕС‚ РєРѕС‚РѕСЂРѕРіРѕ Р±СѓРґРµС‚ РґРѕСЃС‚Р°РІРєР°
         Storage* storage = db.findStorage(order.getStorageId());
         if (!storage) continue;
 
-        // вычисляем расстояние от склада до клиента
+        // РІС‹С‡РёСЃР»СЏРµРј СЂР°СЃСЃС‚РѕСЏРЅРёРµ РѕС‚ СЃРєР»Р°РґР° РґРѕ РєР»РёРµРЅС‚Р°
         pair<int, int> storage_coords = storage->getCoordinates();
         double distance = order.calculateDistanceTo(storage_coords);
         order.setDistance(distance);
 
-        // ищем ближайшего свободного курьера у этого склада
+        // РёС‰РµРј Р±Р»РёР¶Р°Р№С€РµРіРѕ СЃРІРѕР±РѕРґРЅРѕРіРѕ РєСѓСЂСЊРµСЂР° Сѓ СЌС‚РѕРіРѕ СЃРєР»Р°РґР°
         Deliver* best_deliver = nullptr;
         double min_distance = 1e9;
 
@@ -55,12 +55,12 @@ void DeliveryManager::assignOrders() {
         }
 
         if (best_deliver) {
-            // назначаем заказ курьеру
+            // РЅР°Р·РЅР°С‡Р°РµРј Р·Р°РєР°Р· РєСѓСЂСЊРµСЂСѓ
             order.setIsActive(true);
             order.setAssignedDeliverId(best_deliver->getId());
             order.setEstimatedTime(distance / best_deliver->getSpeed());
 
-            // обновляем заказ в БД
+            // РѕР±РЅРѕРІР»СЏРµРј Р·Р°РєР°Р· РІ Р‘Р”
             for (auto& o : db.getOrders()) {
                 if (o.getId() == order.getId()) {
                     o = order;
@@ -68,50 +68,50 @@ void DeliveryManager::assignOrders() {
                 }
             }
 
-            // отправляем курьера
+            // РѕС‚РїСЂР°РІР»СЏРµРј РєСѓСЂСЊРµСЂР°
             best_deliver->startDelivery(order.getId(), order.getDeliveryAddress());
 
-            // удаляем из списка свободных
+            // СѓРґР°Р»СЏРµРј РёР· СЃРїРёСЃРєР° СЃРІРѕР±РѕРґРЅС‹С…
             free_delivers.erase(remove(free_delivers.begin(), free_delivers.end(), best_deliver),
                 free_delivers.end());
 
-            cout << "[Время " << static_cast<int>(current_time) << "] Заказ #" << order.getId()
-                << " назначен курьеру " << best_deliver->getName() << "\n";
+            cout << "[Р’СЂРµРјСЏ " << static_cast<int>(current_time) << "] Р—Р°РєР°Р· #" << order.getId()
+                << " РЅР°Р·РЅР°С‡РµРЅ РєСѓСЂСЊРµСЂСѓ " << best_deliver->getName() << "\n";
         }
         else {
-            // если нет подходящего курьера, возвращаем заказ в очередь
+            // РµСЃР»Рё РЅРµС‚ РїРѕРґС…РѕРґСЏС‰РµРіРѕ РєСѓСЂСЊРµСЂР°, РІРѕР·РІСЂР°С‰Р°РµРј Р·Р°РєР°Р· РІ РѕС‡РµСЂРµРґСЊ
             order_queue.push(order);
             break;
         }
     }
 }
 
-// перемотка времени
+// РїРµСЂРµРјРѕС‚РєР° РІСЂРµРјРµРЅРё
 void DeliveryManager::fastForward(int hours) {
-    cout << "\n=== ПЕРЕМОТКА ВРЕМЕНИ НА " << hours << " ЧАСОВ ===\n";
+    cout << "\n=== РџР•Р Р•РњРћРўРљРђ Р’Р Р•РњР•РќР РќРђ " << hours << " Р§РђРЎРћР’ ===\n";
 
-    // разбиваем на маленькие шаги для плавного обновления
+    // СЂР°Р·Р±РёРІР°РµРј РЅР° РјР°Р»РµРЅСЊРєРёРµ С€Р°РіРё РґР»СЏ РїР»Р°РІРЅРѕРіРѕ РѕР±РЅРѕРІР»РµРЅРёСЏ
     const double STEP_HOURS = 0.1;
     double remaining = hours;
 
     while (remaining > 0) {
         double step = min(STEP_HOURS, remaining);
 
-        // обновляем позиции всех курьеров
+        // РѕР±РЅРѕРІР»СЏРµРј РїРѕР·РёС†РёРё РІСЃРµС… РєСѓСЂСЊРµСЂРѕРІ
         for (auto& deliver : db.getDelivers()) {
             if (deliver.getIsOnDelivery()) {
                 deliver.updatePosition(step);
 
-                // проверяем, не завершена ли доставка
+                // РїСЂРѕРІРµСЂСЏРµРј, РЅРµ Р·Р°РІРµСЂС€РµРЅР° Р»Рё РґРѕСЃС‚Р°РІРєР°
                 if (deliver.isDeliveryComplete()) {
-                    // находим заказ и отмечаем его выполненным
+                    // РЅР°С…РѕРґРёРј Р·Р°РєР°Р· Рё РѕС‚РјРµС‡Р°РµРј РµРіРѕ РІС‹РїРѕР»РЅРµРЅРЅС‹Рј
                     unsigned int order_id = deliver.getCurrentOrderId();
                     Order* order = db.findOrder(order_id);
                     if (order) {
                         order->setIsCompleted(true);
                         order->setIsActive(false);
-                        cout << "[Время " << current_time + step << "] Курьер " << deliver.getName()
-                            << " завершил доставку заказа #" << order_id << "\n";
+                        cout << "[Р’СЂРµРјСЏ " << current_time + step << "] РљСѓСЂСЊРµСЂ " << deliver.getName()
+                            << " Р·Р°РІРµСЂС€РёР» РґРѕСЃС‚Р°РІРєСѓ Р·Р°РєР°Р·Р° #" << order_id << "\n";
                     }
                     deliver.completeDelivery();
                 }
@@ -122,15 +122,15 @@ void DeliveryManager::fastForward(int hours) {
         current_time += step;
     }
 
-    // округляем время для отображения
+    // РѕРєСЂСѓРіР»СЏРµРј РІСЂРµРјСЏ РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ
     int rounded_time = static_cast<int>(current_time);
-    cout << "Текущее время: " << rounded_time << " часов\n";
+    cout << "РўРµРєСѓС‰РµРµ РІСЂРµРјСЏ: " << rounded_time << " С‡Р°СЃРѕРІ\n";
 
-    // назначаем новые заказы
+    // РЅР°Р·РЅР°С‡Р°РµРј РЅРѕРІС‹Рµ Р·Р°РєР°Р·С‹
     assignOrders();
 }
 
-// геттеры
+// РіРµС‚С‚РµСЂС‹
 queue<Order>& DeliveryManager::getOrderQueue() {
     return order_queue;
 }
@@ -143,19 +143,19 @@ void DeliveryManager::setCurrentTime(double time) {
     current_time = time;
 }
 
-// вывод статуса курьеров
+// РІС‹РІРѕРґ СЃС‚Р°С‚СѓСЃР° РєСѓСЂСЊРµСЂРѕРІ
 void DeliveryManager::printDeliverStatus() const {
-    cout << "\n=== СТАТУС КУРЬЕРОВ ===\n";
+    cout << "\n=== РЎРўРђРўРЈРЎ РљРЈР Р¬Р•Р РћР’ ===\n";
     for (auto& d : db.getDelivers()) {
         d.print();
     }
 }
 
-// вывод очереди заказов
+// РІС‹РІРѕРґ РѕС‡РµСЂРµРґРё Р·Р°РєР°Р·РѕРІ
 void DeliveryManager::printOrderQueue() const {
-    cout << "\n=== ОЧЕРЕДЬ ЗАКАЗОВ ===\n";
+    cout << "\n=== РћР§Р•Р Р•Р”Р¬ Р—РђРљРђР—РћР’ ===\n";
     if (order_queue.empty()) {
-        cout << "Очередь пуста\n";
+        cout << "РћС‡РµСЂРµРґСЊ РїСѓСЃС‚Р°\n";
     }
     else {
         queue<Order> temp = order_queue;
@@ -163,8 +163,8 @@ void DeliveryManager::printOrderQueue() const {
         while (!temp.empty()) {
             Order o = temp.front();
             temp.pop();
-            cout << pos++ << ". Заказ #" << o.getId()
-                << " (клиент: " << o.getCustomerName() << ")\n";
+            cout << pos++ << ". Р—Р°РєР°Р· #" << o.getId()
+                << " (РєР»РёРµРЅС‚: " << o.getCustomerName() << ")\n";
         }
     }
 }
