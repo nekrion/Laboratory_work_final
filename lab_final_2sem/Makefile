@@ -1,6 +1,6 @@
 # Компилятор и флаги
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall -Wextra -Iall_hpp
+CXXFLAGS = -std=c++11 -Wall -Wextra -IAll_hpp_files
 
 # Папки
 SRC_DIR = All_cpp_files

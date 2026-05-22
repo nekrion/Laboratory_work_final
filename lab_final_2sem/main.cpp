@@ -1,11 +1,11 @@
-// #include <windows.h>
+//#include <windows.h>
 #include <thread>
 #include <chrono>
 #include <limits>
-#include "database.hpp"
-#include "deliver.hpp"
-#include "order.hpp"
-#include "storage.hpp"
+#include "./../All_hpp_files/database.hpp"
+#include "./../All_hpp_files/deliver.hpp"
+#include "./../All_hpp_files/order.hpp"
+#include "./../All_hpp_files/storage.hpp"
 
 using namespace std;
 
@@ -66,7 +66,7 @@ void ShowTerminal() {
 // (опционально) функция для тестового заполнения
 void fillTestData(DataBase &db) {
 	// добавляем склад
-	db.addStorage(1, "Склад Южный", {0, 0}, {}, true);
+	db.addStorage(1, "Склад_Южный", {0, 0}, {}, true);
 	// добавляем курьера на склад
 	db.addDeliver(101, 1, 10, "Иван", false, true);
 	// привязываем курьера к складу
@@ -74,15 +74,15 @@ void fillTestData(DataBase &db) {
 		if (s.getId() == 1) s.link_deliver(101);
 	}
 	// добавляем заказ
-	db.addOrder(1001, 500, 0, 0, "ул. Ленина, 5", "Склад Южный", false, false, {10, 10});
+	db.addOrder(1001, 500, 0, 0, "ул. Ленина, 5", "Склад_Южный", false, false, {10, 10});
 }
 
 int main() {
-	// SetConsoleCP(65001); братва я на линуксе, не обессудьте
-	// SetConsoleOutputCP(65001);
+	//SetConsoleCP(65001); 
+	//SetConsoleOutputCP(65001);
 
 	DataBase db;
-	// fillTestData(db); // раскомментировать для тестового заполнения
+	fillTestData(db); // раскомментировать для тестового заполнения
 
 	LoadTerminal(); // запуск терминала
 
