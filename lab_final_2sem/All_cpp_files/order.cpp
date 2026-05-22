@@ -1,3 +1,7 @@
+/**
+ * @file order.cpp
+ * @brief Реализация методов класса Order.
+ */
 #include "./../All_hpp_files/order.hpp"
 // здесь реализация классов/класса
 
