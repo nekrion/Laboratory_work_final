@@ -1,21 +1,55 @@
-all: main.o database.o deliver.o order.o storage.o
-	g++ main.o database.o deliver.o order.o storage.o -o a.out
+# Компилятор и флаги
+CXX = g++
+CXXFLAGS = -std=c++11 -Wall -Wextra -Iall_hpp
 
-main.o: main.cpp
-	g++ -c main.cpp -IAll_hpp_files
+# Папки
+SRC_DIR = all_cpp
+OBJ_DIR = obj
+HPP_DIR = all_hpp
 
-database.o: All_cpp_files/database.cpp
-	g++ -c All_cpp_files/database.cpp -IAll_hpp_files
+# Исходные файлы (все .cpp в папке all_cpp)
+SRCS = $(wildcard $(SRC_DIR)/*.cpp)
+# Добавляем main.cpp из текущей папки
+MAIN_SRC = main.cpp
+ALL_SRCS = $(MAIN_SRC) $(SRCS)
 
-deliver.o: All_cpp_files/deliver.cpp
-	g++ -c All_cpp_files/deliver.cpp -IAll_hpp_files
+# Объектные файлы: main.o в корне, остальные в папке obj/
+MAIN_OBJ = main.o
+OTHER_OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
+OBJS = $(MAIN_OBJ) $(OTHER_OBJS)
 
-order.o: All_cpp_files/order.cpp
-	g++ -c All_cpp_files/order.cpp -IAll_hpp_files
+# Имя исполняемого файла
+TARGET = delivery.exe
 
-storage.o: All_cpp_files/storage.cpp
-	g++ -c All_cpp_files/storage.cpp -IAll_hpp_files
+# Цель по умолчанию
+all: $(TARGET)
 
+# Создание папки для объектных файлов
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
+
+# Сборка исполняемого файла
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+# Компиляция main.cpp
+$(MAIN_OBJ): main.cpp $(HPP_DIR)/*.hpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Компиляция остальных .cpp (из папки all_cpp)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(HPP_DIR)/*.hpp | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Очистка
 clean:
-	rm *.o
-	rm a.out
+	rm -f $(OBJS) $(TARGET)
+	rm -rf $(OBJ_DIR)
+
+# Пересборка
+rebuild: clean all
+
+# Запуск
+run: $(TARGET)
+	./$(TARGET)
+
+.PHONY: all clean rebuild run
