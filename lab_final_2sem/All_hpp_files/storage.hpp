@@ -1,9 +1,22 @@
+/**
+ * @file storage.hpp
+ * @brief Определение класса Storage (склад).
+ * @authors Грачев Никита, Салтысюк Анастасия, Павлюченков Артем, Пропажин Антон, Луконин Валерий.
+ * @date 2026
+ */
 #pragma once
 #include <bits/stdc++.h>
 #include <queue>
 #include "deliver.hpp"
 
 using namespace std;
+/**
+ * @brief Класс, представляющий склад компании доставки.
+ * 
+ * Хранит информацию о складе: ID, название, координаты,
+ * список привязанных курьеров, активность и очередь заказов,
+ * ожидающих свободного курьера.
+ */
 
 
 class Storage {
@@ -19,6 +32,14 @@ private:
 public:
 
 	Storage() {
+		 /**
+     * @brief Конструктор с параметрами.
+     * @param id ID склада
+     * @param name Название
+     * @param coordinates Координаты
+     * @param id_linked_delivers Вектор ID привязанных курьеров
+     * @param is_active Активен ли
+     */
 		id = 0;
 		name = "-";
 		coordinates = {0, 0};
