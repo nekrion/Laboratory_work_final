@@ -15,6 +15,9 @@
 #include "./../All_hpp_files/storage.hpp"
 
 using namespace std;
+/**
+ * @brief Анимация загрузки терминала.
+ */
 
 void LoadTerminal() {
 	cout << "Запуск терминала";
@@ -48,7 +51,11 @@ void LoadTerminal() {
 	cout << "\nТерминал запущен\n";
 	this_thread::sleep_for(chrono::seconds(2));
 	cout << "\033[2J\033[1;1H"; // очистка экрана
+	
 //	system("cls");
+	/**
+ * @brief Вывод меню терминала.
+ */
 }
 
 void ShowTerminal() {
@@ -69,7 +76,10 @@ void ShowTerminal() {
 	cout << "10 - Просмотр очереди заказов склада\n";
 	cout << "||===========================================================||\n";
 }
-
+/**
+ * @brief Тестовое заполнение базы данных.
+ * @param db Ссылка на объект DataBase
+ */
 // (опционально) функция для тестового заполнения
 void fillTestData(DataBase &db) {
 	// добавляем склад
@@ -83,6 +93,10 @@ void fillTestData(DataBase &db) {
 	// добавляем заказ
 	db.addOrder(1001, 500, 0, 0, "ул. Ленина, 5", "Склад_Южный", false, false, {10, 10});
 }
+/**
+ * @brief Точка входа в программу.
+ * @return 0 при успешном завершении
+ */
 
 int main() {
 	//SetConsoleCP(65001); 
