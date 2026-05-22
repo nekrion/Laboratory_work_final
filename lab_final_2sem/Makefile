@@ -3,9 +3,9 @@ CXX = g++
 CXXFLAGS = -std=c++11 -Wall -Wextra -Iall_hpp
 
 # Папки
-SRC_DIR = all_cpp
+SRC_DIR = All_cpp_files
 OBJ_DIR = obj
-HPP_DIR = all_hpp
+HPP_DIR = All_hpp_files
 
 # Исходные файлы (все .cpp в папке all_cpp)
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)
