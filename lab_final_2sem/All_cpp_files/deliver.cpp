@@ -1,3 +1,8 @@
+/**
+ * @file deliver.cpp
+ * @brief Реализация методов класса Deliver.
+ */
+// ... реализация
 #include "./../All_hpp_files/deliver.hpp"
 // здесь реализация классов/класса
 
