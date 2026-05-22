@@ -1,3 +1,7 @@
+/**
+ * @file storage.cpp
+ * @brief Реализация методов класса Storage.
+ */
 #include "./../All_hpp_files/storage.hpp"
 // здесь реализация классов/класса
 
