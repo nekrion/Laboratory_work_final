@@ -1,3 +1,8 @@
+/**
+ * @file database.cpp
+ * @brief Реализация методов класса Database.
+ */
+// ... реализация
 #include "./../All_hpp_files/database.hpp"
 #include <cmath>
 #include <fstream>
