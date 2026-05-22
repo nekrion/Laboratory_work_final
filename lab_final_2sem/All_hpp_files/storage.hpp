@@ -38,7 +38,7 @@ public:
      * @param name Название
      * @param coordinates Координаты
      * @param id_linked_delivers Вектор ID привязанных курьеров
-     * @param is_active Активен ли
+     * @param is_active Активен ли?
      */
 		id = 0;
 		name = "-";
