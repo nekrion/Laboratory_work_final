@@ -9,6 +9,12 @@
 #include <algorithm>
 
 using namespace std;
+/**
+ * @brief Евклидово расстояние между двумя точками.
+ * @param a Первая точка
+ * @param b Вторая точка
+ * @return Расстояние
+ */
 
 // вспомогательная функция для вычисления евклидова расстояния между двумя точками
 static double distance(const pair<int,int>& a, const pair<int,int>& b) {
